@@ -29,6 +29,7 @@ jobs:
       - name: Fetch Weather and Generate RSS
         env:
           QWEATHER_KEY: ${{ secrets.QWEATHER_KEY }}
+          QWEATHER_HOST: ${{ secrets.QWEATHER_HOST }}
         run: |
           python fetch_weather.py
 

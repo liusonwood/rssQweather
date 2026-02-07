@@ -6,24 +6,42 @@ from xml.dom import minidom
 import sys
 
 # Configuration
-# QWeather API Endpoint for 3-day forecast (Free subscription compatible)
-API_URL = "https://devapi.qweather.com/v7/weather/3d"
-# Location ID for Shanghai (101020100). 
-# You can find other IDs via QWeather GeoAPI if needed.
-LOCATION_ID = "101020100" 
+# QWeather API Endpoint
+# Users must provide their unique API Host from the QWeather Console
+API_HOST = os.environ.get("QWEATHER_HOST")
+LOCATION_ID = "101020100" # Shanghai
 RSS_FILENAME = "weather.xml"
 
 def get_weather_forecast(api_key):
     """Fetches weather data from QWeather API."""
+    if not API_HOST:
+        print("Error: QWEATHER_HOST environment variable not set.")
+        sys.exit(1)
+        
+    # Construct the full URL using the dynamic host
+    url = f"https://{API_HOST}/v7/weather/3d"
+    
     params = {
         "location": LOCATION_ID,
         "key": api_key,
-        "lang": "en" # Request English results
+        "lang": "en"
+    }
+    
+    # Adding a User-Agent is a best practice to avoid 403 errors
+    headers = {
+        "User-Agent": "WeatherRSSBot/1.0 (GitHub Actions)",
+        "Accept-Encoding": "gzip" # Explicitly request gzip as per docs
     }
     
     try:
-        response = requests.get(API_URL, params=params)
-        response.raise_for_status()
+        response = requests.get(url, params=params, headers=headers)
+        
+        # Check for HTTP errors
+        if response.status_code != 200:
+            print(f"HTTP Error: {response.status_code}")
+            print(f"Response Body: {response.text}")
+            sys.exit(1)
+
         data = response.json()
         
         if data.get("code") != "200":
@@ -47,8 +65,9 @@ def generate_rss(daily_forecast):
     tomorrow = daily_forecast[1]
     
     # Parse data
-    date_str = tomorrow["fxDate"] # YYYY-MM-DD
+    date_str = tomorrow["fxDate"] 
     text_day = tomorrow["textDay"]
+    text_night = tomorrow["textNight"]
     temp_max = tomorrow["tempMax"]
     temp_min = tomorrow["tempMin"]
     humidity = tomorrow["humidity"]
@@ -61,7 +80,8 @@ def generate_rss(daily_forecast):
     
     description = (
         f"<strong>Date:</strong> {date_str}<br/>"
-        f"<strong>Condition:</strong> {text_day}<br/>"
+        f"<strong>Day:</strong> {text_day}<br/>"
+        f"<strong>Night:</strong> {text_night}<br/>"
         f"<strong>Temperature:</strong> {temp_min}°C to {temp_max}°C<br/>"
         f"<strong>Humidity:</strong> {humidity}%<br/>"
         f"<strong>Wind:</strong> {wind_dir} (Scale: {wind_scale})<br/>"

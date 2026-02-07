@@ -21,20 +21,21 @@ You can subscribe to this weather feed using your favorite RSS reader by using t
 - Obtain your **API Key**.
 
 ### 2. Configure GitHub Secrets
-To allow the automation to run, you must add your API key to GitHub:
+To allow the automation to run, you must add your API key and Host to GitHub:
 1.  Go to your repository on GitHub.
 2.  Navigate to **Settings** > **Secrets and variables** > **Actions**.
-3.  Click **New repository secret**.
-4.  **Name**: `QWEATHER_KEY`
-5.  **Value**: Paste your QWeather API Key.
-6.  Click **Add secret**.
+3.  Click **New repository secret** for each of the following:
+    *   **Name**: `QWEATHER_KEY` | **Value**: Your API Key.
+    *   **Name**: `QWEATHER_HOST` | **Value**: Your API Host (e.g., `xxx.re.qweatherapi.com`).
+4.  Click **Add secret**.
 
 ### 3. Workflow Permissions
 Ensure the GitHub Actions bot has permission to write to your repository:
 1.  Go to **Settings** > **Actions** > **General**.
 2.  Scroll down to **Workflow permissions**.
 3.  Select **Read and write permissions**.
-4.  Click **Save**.
+4.  Check **Allow GitHub Actions to create and approve pull requests** (optional but recommended).
+5.  Click **Save**.
 
 ## 🖥️ Local Development
 If you want to run the script locally:
@@ -43,8 +44,9 @@ If you want to run the script locally:
 # Install dependencies
 pip install -r requirements.txt
 
-# Set your API key
+# Set your credentials
 export QWEATHER_KEY="your_api_key_here"
+export QWEATHER_HOST="xxx.re.qweatherapi.com"
 
 # Run the script
 python fetch_weather.py
