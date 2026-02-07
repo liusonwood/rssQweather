@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<rss version="2.0">
+  <channel>
+    <title>Shanghai Weather Forecast</title>
+    <link>https://github.com/liusonwood/github-rss-weather</link>
+    <description>Daily weather forecast for Shanghai via QWeather.</description>
+    <lastBuildDate>Sat, 07 Feb 2026 15:19:43 GMT</lastBuildDate>
+    <item>
+      <title>2026-02-08: Sunny, -1°C - 4°C</title>
+      <description>&lt;strong&gt;Date:&lt;/strong&gt; 2026-02-08&lt;br/&gt;&lt;strong&gt;Day:&lt;/strong&gt; Sunny&lt;br/&gt;&lt;strong&gt;Night:&lt;/strong&gt; Clear&lt;br/&gt;&lt;strong&gt;Temperature:&lt;/strong&gt; -1°C to 4°C&lt;br/&gt;&lt;strong&gt;Humidity:&lt;/strong&gt; 40%&lt;br/&gt;&lt;strong&gt;Wind:&lt;/strong&gt; W (Scale: 1-3)&lt;br/&gt;&lt;strong&gt;UV Index:&lt;/strong&gt; 4</description>
+      <guid>shanghai-weather-2026-02-08</guid>
+      <pubDate>Sat, 07 Feb 2026 15:19:43 GMT</pubDate>
+    </item>
+  </channel>
+</rss>
