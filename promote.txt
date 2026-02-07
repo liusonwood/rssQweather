@@ -1,0 +1,24 @@
+Role: You are an expert Developer and GitHub Actions Automation Specialist.
+Objective: Create a script and a GitHub Actions workflow to fetch tomorrow's weather forecast for shanghai using the QWeather (和风天气) API and generate an RSS feed (XML file). This file will be saved in the GitHub repository so I can subscribe to it via the Raw URL.
+Requirements:
+1. Script:
+• Use the requests library to call the QWeather Daily Forecast API (doc:https://dev.qweather.com/docs/api/).
+• Input: Use location and an api_key.
+• Logic: Extract tomorrow's data (for example:date, weather condition, max/min temperature, wind, and humidity).
+• Output: Generate a standard RSS 2.0 XML file named weather.xml.
+• The <item> title should include the date and a summary (e.g., "02-08: Sunny, 5°C - 15°C").
+• The <description> should contain detailed info like humidity and wind.
+2. GitHub Actions Workflow (.github/workflows/weather.yml):
+• Schedule: Run daily at a specific time 20:00 UTC.
+• Environment: Use ubuntu-latest.
+• Secrets: The QWeather API Key must be fetched from GitHub Secrets (variable name: QWEATHER_KEY).
+• Permissions: Ensure the workflow has write permissions to commit and push the updated weather.xml back to the repository.
+• Git Config: Configure a generic bot name and email for the commit.
+3. Code Quality:
+• Handle potential API errors gracefully.
+• Add clear comments in the code.
+• Include a requirements.txt generation step or a simple pip install command.
+Deliverables:
+1. Complete fetch_weather code.
+2. Complete .github/workflows/weather.yml file content.
+3. Brief instructions on how to set up the QWEATHER_KEY in GitHub Secrets.
