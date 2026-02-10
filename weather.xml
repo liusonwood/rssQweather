@@ -4,12 +4,12 @@
     <title>Shanghai Weather Forecast</title>
     <link>https://github.com/liusonwood/github-rss-weather</link>
     <description>Daily weather forecast for Shanghai via QWeather.</description>
-    <lastBuildDate>Mon, 09 Feb 2026 20:35:03 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 10 Feb 2026 10:28:06 GMT</lastBuildDate>
     <item>
       <title>2026-02-11: Sunny, 4°C - 13°C</title>
-      <description>&lt;strong&gt;Date:&lt;/strong&gt; 2026-02-11&lt;br/&gt;&lt;strong&gt;Condition (Day):&lt;/strong&gt; Sunny (Icon: 100)&lt;br/&gt;&lt;strong&gt;Condition (Night):&lt;/strong&gt; Cloudy (Icon: 151)&lt;br/&gt;&lt;strong&gt;Temperature:&lt;/strong&gt; 4°C to 13°C&lt;br/&gt;&lt;strong&gt;Sun:&lt;/strong&gt; Rise 06:40, Set 17:38&lt;br/&gt;&lt;strong&gt;Moon:&lt;/strong&gt; Rise 01:48, Set 11:50 (Phase: Waning crescent)&lt;br/&gt;&lt;strong&gt;Wind (Day):&lt;/strong&gt; E (90°), Scale 1-3, Speed 3 km/h&lt;br/&gt;&lt;strong&gt;Wind (Night):&lt;/strong&gt; SE (135°), Scale 1-3, Speed 3 km/h&lt;br/&gt;&lt;strong&gt;Humidity:&lt;/strong&gt; 62%&lt;br/&gt;&lt;strong&gt;Precipitation:&lt;/strong&gt; 0.0 mm&lt;br/&gt;&lt;strong&gt;Pressure:&lt;/strong&gt; 1025 hPa&lt;br/&gt;&lt;strong&gt;Visibility:&lt;/strong&gt; 25 km&lt;br/&gt;&lt;strong&gt;Cloud Cover:&lt;/strong&gt; 0%&lt;br/&gt;&lt;strong&gt;UV Index:&lt;/strong&gt; 4</description>
+      <description>&lt;strong&gt;Date:&lt;/strong&gt; 2026-02-11&lt;br/&gt;&lt;strong&gt;Condition (Day):&lt;/strong&gt; Sunny (Icon: 100)&lt;br/&gt;&lt;strong&gt;Condition (Night):&lt;/strong&gt; Clear (Icon: 150)&lt;br/&gt;&lt;strong&gt;Temperature:&lt;/strong&gt; 4°C to 13°C&lt;br/&gt;&lt;strong&gt;Sun:&lt;/strong&gt; Rise 06:40, Set 17:38&lt;br/&gt;&lt;strong&gt;Moon:&lt;/strong&gt; Rise 01:48, Set 11:50 (Phase: Waning crescent)&lt;br/&gt;&lt;strong&gt;Wind (Day):&lt;/strong&gt; NW (315°), Scale 1-3, Speed 3 km/h&lt;br/&gt;&lt;strong&gt;Wind (Night):&lt;/strong&gt; E (90°), Scale 1-3, Speed 3 km/h&lt;br/&gt;&lt;strong&gt;Humidity:&lt;/strong&gt; 68%&lt;br/&gt;&lt;strong&gt;Precipitation:&lt;/strong&gt; 0.0 mm&lt;br/&gt;&lt;strong&gt;Pressure:&lt;/strong&gt; 1025 hPa&lt;br/&gt;&lt;strong&gt;Visibility:&lt;/strong&gt; 25 km&lt;br/&gt;&lt;strong&gt;Cloud Cover:&lt;/strong&gt; 0%&lt;br/&gt;&lt;strong&gt;UV Index:&lt;/strong&gt; 4</description>
       <guid>shanghai-weather-2026-02-11</guid>
-      <pubDate>Mon, 09 Feb 2026 20:35:03 GMT</pubDate>
+      <pubDate>Tue, 10 Feb 2026 10:28:06 GMT</pubDate>
     </item>
   </channel>
 </rss>
