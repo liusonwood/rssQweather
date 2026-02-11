@@ -167,6 +167,7 @@ def generate_rss(daily_forecast):
     # Create new item
     item = ET.Element("item")
     ET.SubElement(item, "title").text = title
+    ET.SubElement(item, "link").text = "https://github.com/liusonwood/github-rss-weather"
     ET.SubElement(item, "description").text = description
     ET.SubElement(item, "guid").text = guid_text
     ET.SubElement(item, "pubDate").text = datetime.datetime.now(datetime.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
