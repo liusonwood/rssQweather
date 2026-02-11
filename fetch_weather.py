@@ -124,7 +124,7 @@ def generate_rss(daily_forecast):
         f"<strong>Humidity:</strong> {humidity}%<br/>"
         f"<strong>Visibility:</strong> {vis} km<br/>"
         f"<strong>Sun:</strong> Rise {sunrise}, Set {sunset}<br/>"
-        f"<strong>Moon:</strong> Rise {moonrise}, Set {moonset} (Phase: {moon_phase})<br/>"
+        f"<strong>Moon:</strong> Rise {moonrise}, Set {moonset} (Phase: {moon_phase},{moon_phase_icon})<br/>"
         f"<strong>UV Index:</strong> {uv_index}"
     )
 
