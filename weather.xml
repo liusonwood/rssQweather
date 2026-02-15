@@ -4,7 +4,14 @@
     <title>Shanghai Weather Forecast</title>
     <link>https://github.com/liusonwood/github-rss-weather</link>
     <description>Daily weather forecast for Shanghai via QWeather.</description>
-    <lastBuildDate>Sat, 14 Feb 2026 23:14:27 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 15 Feb 2026 23:16:02 GMT</lastBuildDate>
+    <item>
+      <title>2026-02-17: Overcast, 3°C - 9°C</title>
+      <link>https://github.com/liusonwood/github-rss-weather</link>
+      <description>&lt;strong&gt;Condition (Day):&lt;/strong&gt; Overcast (Icon: 104)&lt;br/&gt;&lt;strong&gt;Condition (Night):&lt;/strong&gt; Overcast (Icon: 104)&lt;br/&gt;&lt;strong&gt;Temperature:&lt;/strong&gt; 3°C to 9°C&lt;br/&gt;&lt;strong&gt;Precipitation:&lt;/strong&gt; 0.0 mm&lt;br/&gt;&lt;strong&gt;Cloud Cover:&lt;/strong&gt; 3%&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Wind (Day):&lt;/strong&gt; NE (45°), Scale 1-3, Speed 3 km/h&lt;br/&gt;&lt;strong&gt;Wind (Night):&lt;/strong&gt; W (270°), Scale 1-3, Speed 3 km/h&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Humidity:&lt;/strong&gt; 54%&lt;br/&gt;&lt;strong&gt;Visibility:&lt;/strong&gt; 25 km&lt;br/&gt;&lt;strong&gt;Sun:&lt;/strong&gt; Rise 06:35, Set 17:43&lt;br/&gt;&lt;strong&gt;Moon:&lt;/strong&gt; Rise 06:18, Set 17:28 (Phase: New Moon,800)&lt;br/&gt;&lt;strong&gt;UV Index:&lt;/strong&gt; 2</description>
+      <guid>shanghai-weather-2026-02-17</guid>
+      <pubDate>Sun, 15 Feb 2026 23:16:02 GMT</pubDate>
+    </item>
     <item>
       <title>2026-02-16: Overcast, 3°C - 8°C</title>
       <link>https://github.com/liusonwood/github-rss-weather</link>
