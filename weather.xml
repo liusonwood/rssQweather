@@ -1,9 +1,10 @@
 <?xml version="1.0" ?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Shanghai Weather Forecast</title>
     <link>https://github.com/liusonwood/github-rss-weather</link>
     <description>Daily weather forecast for Shanghai via QWeather.</description>
+    <atom:link href="https://fastly.jsdelivr.net/gh/liusonwood/rssqweather@main/weather.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Fri, 27 Feb 2026 11:45:44 GMT</lastBuildDate>
     <item>
       <title>2026-02-28: Cloudy, 9°C - 14°C</title>
