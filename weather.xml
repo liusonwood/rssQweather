@@ -1,1 +1,16 @@
-
+<?xml version="1.0" ?>
+<rss version="2.0">
+  <channel>
+    <title>Shanghai Weather Forecast</title>
+    <link>https://github.com/liusonwood/github-rss-weather</link>
+    <description>Daily weather forecast for Shanghai via QWeather.</description>
+    <lastBuildDate>Fri, 27 Feb 2026 11:45:44 GMT</lastBuildDate>
+    <item>
+      <title>2026-02-28: Cloudy, 9°C - 14°C</title>
+      <link>https://github.com/liusonwood/github-rss-weather</link>
+      <description>&lt;strong&gt;Condition (Day):&lt;/strong&gt; Cloudy (Icon: 101)&lt;br/&gt;&lt;strong&gt;Condition (Night):&lt;/strong&gt; Overcast (Icon: 104)&lt;br/&gt;&lt;strong&gt;Temperature:&lt;/strong&gt; 9°C to 14°C&lt;br/&gt;&lt;strong&gt;Precipitation:&lt;/strong&gt; 0.0 mm&lt;br/&gt;&lt;strong&gt;Cloud Cover:&lt;/strong&gt; 9%&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Wind (Day):&lt;/strong&gt; E (90°), Scale 1-3, Speed 3 km/h&lt;br/&gt;&lt;strong&gt;Wind (Night):&lt;/strong&gt; SE (135°), Scale 1-3, Speed 3 km/h&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Humidity:&lt;/strong&gt; 84%&lt;br/&gt;&lt;strong&gt;Visibility:&lt;/strong&gt; 25 km&lt;br/&gt;&lt;strong&gt;Sun:&lt;/strong&gt; Rise 06:24, Set 17:52&lt;br/&gt;&lt;strong&gt;Moon:&lt;/strong&gt; Rise 14:35, Set 04:20 (Phase: Waxing gibbous,803)&lt;br/&gt;&lt;strong&gt;UV Index:&lt;/strong&gt; 1</description>
+      <guid isPermaLink="false">shanghai-weather-2026-02-28</guid>
+      <pubDate>Fri, 27 Feb 2026 11:45:44 GMT</pubDate>
+    </item>
+  </channel>
+</rss>
