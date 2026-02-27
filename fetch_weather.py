@@ -56,6 +56,9 @@ def get_weather_forecast(api_key):
 def generate_rss(daily_forecast):
     """Generates an RSS 2.0 XML file from the forecast data, appending new data."""
     
+    # Register Atom namespace
+    ET.register_namespace('atom', "http://www.w3.org/2005/Atom")
+
     # We want tomorrow's weather. 
     # daily_forecast[0] is today, daily_forecast[1] is tomorrow.
     if len(daily_forecast) < 2:
@@ -149,6 +152,25 @@ def generate_rss(daily_forecast):
         ET.SubElement(channel, "title").text = "Shanghai Weather Forecast"
         ET.SubElement(channel, "link").text = "https://github.com/liusonwood/github-rss-weather" # Update if needed
         ET.SubElement(channel, "description").text = "Daily weather forecast for Shanghai via QWeather."
+
+    # Add atom:link (required for RSS validation)
+    atom_ns = "http://www.w3.org/2005/Atom"
+    atom_link_url = "https://fastly.jsdelivr.net/gh/liusonwood/rssqweather@main/weather.xml"
+    
+    # Check if link exists
+    atom_link = None
+    for child in channel.findall(f"{{{atom_ns}}}link"):
+        if child.get("rel") == "self":
+            atom_link = child
+            break
+            
+    if atom_link is None:
+        atom_link = ET.SubElement(channel, f"{{{atom_ns}}}link")
+        atom_link.set("rel", "self")
+        atom_link.set("type", "application/rss+xml")
+    
+    # Always update the href
+    atom_link.set("href", atom_link_url)
 
     # Update Last Build Date
     last_build_date = channel.find("lastBuildDate")
