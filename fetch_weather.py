@@ -155,7 +155,7 @@ def generate_rss(daily_forecast):
 
     # Add atom:link (required for RSS validation)
     atom_ns = "http://www.w3.org/2005/Atom"
-    atom_link_url = "https://fastly.jsdelivr.net/gh/liusonwood/rssqweather@main/weather.xml"
+    atom_link_url = "https://raw.githubusercontent.com/liusonwood/rssqweather/main/weather.xml"
     
     # Check if link exists
     atom_link = None
