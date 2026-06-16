@@ -3,7 +3,17 @@ import requests
 import datetime
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+from email.utils import format_datetime
 import sys
+
+
+def rfc822_now():
+    """Returns the current UTC time as an RFC 2822 / RSS 2.0 compliant date string.
+
+    Using email.utils.format_datetime guarantees a locale-independent,
+    spec-compliant date (e.g. "Tue, 19 May 2026 23:53:02 +0000").
+    """
+    return format_datetime(datetime.datetime.now(datetime.timezone.utc))
 
 # Configuration
 # QWeather API Endpoint
@@ -11,6 +21,7 @@ import sys
 API_HOST = os.environ.get("QWEATHER_HOST")
 LOCATION_ID = "101020100" # Shanghai
 RSS_FILENAME = "weather.xml"
+MAX_ITEMS = 30  # Keep at most this many items; oldest entries are pruned
 
 def get_weather_forecast(api_key):
     """Fetches weather data from QWeather API."""
@@ -144,13 +155,13 @@ def generate_rss(daily_forecast):
             rss = ET.Element("rss", version="2.0")
             channel = ET.SubElement(rss, "channel")
             ET.SubElement(channel, "title").text = "Shanghai Weather Forecast"
-            ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/github-rss-weather#{date_str}" # Update if needed
+            ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/SummaRSS#{date_str}" # Update if needed
             ET.SubElement(channel, "description").text = "Daily weather forecast for Shanghai via QWeather."
     else:
         rss = ET.Element("rss", version="2.0")
         channel = ET.SubElement(rss, "channel")
         ET.SubElement(channel, "title").text = "Shanghai Weather Forecast"
-        ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/github-rss-weather#{date_str}" # Update if needed
+        ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/SummaRSS#{date_str}" # Update if needed
         ET.SubElement(channel, "description").text = "Daily weather forecast for Shanghai via QWeather."
 
     # Add atom:link (required for RSS validation)
@@ -176,7 +187,7 @@ def generate_rss(daily_forecast):
     last_build_date = channel.find("lastBuildDate")
     if last_build_date is None:
         last_build_date = ET.SubElement(channel, "lastBuildDate")
-    last_build_date.text = datetime.datetime.now(datetime.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
+    last_build_date.text = rfc822_now()
 
     # Check for duplicate item (by GUID)
     guid_text = f"shanghai-weather-{date_str}"
@@ -193,10 +204,10 @@ def generate_rss(daily_forecast):
     # Create new item
     item = ET.Element("item")
     ET.SubElement(item, "title").text = title
-    ET.SubElement(item, "link").text = f"https://github.com/liusonwood/github-rss-weather#{date_str}"
+    ET.SubElement(item, "link").text = f"https://github.com/liusonwood/SummaRSS#{date_str}"
     ET.SubElement(item, "description").text = description
     ET.SubElement(item, "guid", isPermaLink="false").text = guid_text
-    ET.SubElement(item, "pubDate").text = datetime.datetime.now(datetime.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
+    ET.SubElement(item, "pubDate").text = rfc822_now()
     
     # Insert at the beginning of items (after channel metadata)
     # Find index of first 'item'
@@ -210,6 +221,15 @@ def generate_rss(daily_forecast):
         channel.insert(first_item_index, item)
     else:
         channel.append(item)
+
+    # Prune oldest items when the feed exceeds the configured limit.
+    # New items are inserted at the top, so items are ordered newest -> oldest.
+    items = channel.findall("item")
+    excess = len(items) - MAX_ITEMS
+    if excess > 0:
+        for old_item in items[-excess:]:
+            channel.remove(old_item)
+        print(f"Pruned {excess} old item(s) to keep at most {MAX_ITEMS} entries.")
 
     # Pretty print XML
     xml_str = minidom.parseString(ET.tostring(rss)).toprettyxml(indent="  ")
