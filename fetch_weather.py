@@ -1,4 +1,6 @@
 import os
+import re
+import unicodedata
 import requests
 import datetime
 import xml.etree.ElementTree as ET
@@ -16,57 +18,109 @@ def rfc822_now():
     return format_datetime(datetime.datetime.now(datetime.timezone.utc))
 
 # Configuration
-# QWeather API Endpoint
-# Users must provide their unique API Host from the QWeather Console
+# QWeather API Host for weather endpoints.
+# Users must provide their unique API Host from the QWeather Console.
 API_HOST = os.environ.get("QWEATHER_HOST")
-LOCATION_ID = "101020100" # Shanghai
+# GeoAPI Host used to resolve the configured city into a Location ID.
+# The default works for most accounts; override only if QWeather provides a dedicated host.
+GEOAPI_HOST = os.environ.get("QWEATHER_GEOAPI_HOST") or "geoapi.qweather.com"
+# Which city to publish. Accepts a city name (e.g. "Shanghai", "北京"), a QWeather
+# Location ID (e.g. "101020100"), an Adcode, or "lon,lat" coordinates.
+# Defaults to Shanghai so the project keeps working without any extra configuration.
+CITY = (os.environ.get("CITY") or "Shanghai").strip()
 RSS_FILENAME = "weather.xml"
 MAX_ITEMS = 30  # Keep at most this many items; oldest entries are pruned
 
-def get_weather_forecast(api_key):
-    """Fetches weather data from QWeather API."""
-    if not API_HOST:
-        print("Error: QWEATHER_HOST environment variable not set.")
-        sys.exit(1)
-        
-    # Construct the full URL using the dynamic host
-    url = f"https://{API_HOST}/v7/weather/3d"
-    
-    params = {
-        "location": LOCATION_ID,
-        "key": api_key,
-        "lang": "en"
-    }
-    
-    # Adding a User-Agent is a best practice to avoid 403 errors
+
+def slugify(text):
+    """Turns an arbitrary city name into a safe slug for use in GUIDs and URLs.
+
+    Non-ASCII characters are transliterated where possible (e.g. "北京" -> "bei-jing"
+    when an English name is passed in, or "" when nothing transliterates), and any
+    remaining non alphanumeric characters collapse into single hyphens. Returns an
+    empty string (never a placeholder) so callers can apply their own fallback.
+    """
+    if not text:
+        return ""
+    # Normalize unicode so accented letters split into base + diacritic, which we strip.
+    normalized = unicodedata.normalize("NFKD", str(text))
+    ascii_only = normalized.encode("ascii", "ignore").decode("ascii")
+    # Lowercase and replace runs of non-alphanumeric chars with a single hyphen.
+    slug = re.sub(r"[^a-z0-9]+", "-", ascii_only.lower()).strip("-")
+    return slug
+
+
+def _request_json(host, path, params, what):
+    """Shared GET helper with consistent error handling for all QWeather endpoints.
+
+    `what` is a short label used in error messages (e.g. "weather", "geo lookup").
+    Returns the parsed JSON body on success and exits the process on any failure.
+    """
+    url = f"https://{host}{path}"
     headers = {
         "User-Agent": "WeatherRSSBot/1.0 (GitHub Actions)",
-        "Accept-Encoding": "gzip" # Explicitly request gzip as per docs
+        "Accept-Encoding": "gzip"  # Explicitly request gzip as per docs
     }
-    
     try:
         response = requests.get(url, params=params, headers=headers)
-        
-        # Check for HTTP errors
         if response.status_code != 200:
-            print(f"HTTP Error: {response.status_code}")
+            print(f"HTTP Error ({what}): {response.status_code}")
             print(f"Response Body: {response.text}")
             sys.exit(1)
 
         data = response.json()
-        
         if data.get("code") != "200":
-            print(f"Error from API: {data.get('code')} - {data.get('msg', 'Unknown error')}")
+            print(f"Error from API ({what}): {data.get('code')} - {data.get('msg', 'Unknown error')}")
             sys.exit(1)
-            
-        return data["daily"]
+        return data
     except requests.exceptions.RequestException as e:
-        print(f"Network error: {e}")
+        print(f"Network error ({what}): {e}")
         sys.exit(1)
 
-def generate_rss(daily_forecast):
+
+def resolve_location(api_key):
+    """Resolves the configured CITY into a (location_id, display_name) pair.
+
+    Uses the QWeather GeoAPI City Lookup, which accepts a city name, Location ID,
+    Adcode, or "lon,lat" coordinates. The first match is returned so the feed
+    always points at exactly one city. Exits with a clear message if no match.
+    """
+    data = _request_json(
+        GEOAPI_HOST,
+        "/v2/city/lookup",
+        {"location": CITY, "key": api_key, "lang": "en", "number": 1},
+        "geo lookup",
+    )
+    locations = data.get("location") or []
+    if not locations:
+        print(f"Error: Could not resolve city '{CITY}' via GeoAPI.")
+        sys.exit(1)
+    first = locations[0]
+    return first.get("id"), first.get("name", CITY)
+
+
+def get_weather_forecast(api_key, location_id):
+    """Fetches weather data from QWeather API."""
+    if not API_HOST:
+        print("Error: QWEATHER_HOST environment variable not set.")
+        sys.exit(1)
+
+    data = _request_json(
+        API_HOST,
+        "/v7/weather/3d",
+        {"location": location_id, "key": api_key, "lang": "en"},
+        "weather",
+    )
+    return data["daily"]
+
+def generate_rss(daily_forecast, city_name, location_id=None):
     """Generates an RSS 2.0 XML file from the forecast data, appending new data."""
-    
+
+    # Prefer the readable city name; if it cannot be slugified to ASCII (rare for
+    # non-Latin names), fall back to the always-numeric Location ID so GUIDs stay
+    # unique and valid instead of collapsing into a generic "city" prefix.
+    city_slug = slugify(city_name) or slugify(location_id or "")
+
     # Register Atom namespace
     ET.register_namespace('atom', "http://www.w3.org/2005/Atom")
 
@@ -154,15 +208,15 @@ def generate_rss(daily_forecast):
             print("Warning: Corrupt or invalid RSS file. Creating new.")
             rss = ET.Element("rss", version="2.0")
             channel = ET.SubElement(rss, "channel")
-            ET.SubElement(channel, "title").text = "Shanghai Weather Forecast"
-            ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/SummaRSS#{date_str}" # Update if needed
-            ET.SubElement(channel, "description").text = "Daily weather forecast for Shanghai via QWeather."
+            ET.SubElement(channel, "title").text = f"{city_name} Weather Forecast"
+            ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/rssQweather#{date_str}" # Update if needed
+            ET.SubElement(channel, "description").text = f"Daily weather forecast for {city_name} via QWeather."
     else:
         rss = ET.Element("rss", version="2.0")
         channel = ET.SubElement(rss, "channel")
-        ET.SubElement(channel, "title").text = "Shanghai Weather Forecast"
-        ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/SummaRSS#{date_str}" # Update if needed
-        ET.SubElement(channel, "description").text = "Daily weather forecast for Shanghai via QWeather."
+        ET.SubElement(channel, "title").text = f"{city_name} Weather Forecast"
+        ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/rssQweather#{date_str}" # Update if needed
+        ET.SubElement(channel, "description").text = f"Daily weather forecast for {city_name} via QWeather."
 
     # Add atom:link (required for RSS validation)
     atom_ns = "http://www.w3.org/2005/Atom"
@@ -190,7 +244,7 @@ def generate_rss(daily_forecast):
     last_build_date.text = rfc822_now()
 
     # Check for duplicate item (by GUID)
-    guid_text = f"shanghai-weather-{date_str}"
+    guid_text = f"{city_slug}-weather-{date_str}"
     existing_item = None
     for item in channel.findall("item"):
         guid = item.find("guid")
@@ -204,7 +258,7 @@ def generate_rss(daily_forecast):
     # Create new item
     item = ET.Element("item")
     ET.SubElement(item, "title").text = title
-    ET.SubElement(item, "link").text = f"https://github.com/liusonwood/SummaRSS#{date_str}"
+    ET.SubElement(item, "link").text = f"https://github.com/liusonwood/rssQweather#{date_str}"
     ET.SubElement(item, "description").text = description
     ET.SubElement(item, "guid", isPermaLink="false").text = guid_text
     ET.SubElement(item, "pubDate").text = rfc822_now()
@@ -240,16 +294,21 @@ def generate_rss(daily_forecast):
     with open(RSS_FILENAME, "w", encoding="utf-8") as f:
         f.write(xml_str)
         
-    print(f"Successfully generated {RSS_FILENAME}")
+    print(f"Successfully generated {RSS_FILENAME} for {city_name}.")
 
 def main():
     api_key = os.environ.get("QWEATHER_KEY")
     if not api_key:
         print("Error: QWEATHER_KEY environment variable not set.")
         sys.exit(1)
-        
-    forecast_data = get_weather_forecast(api_key)
-    generate_rss(forecast_data)
+
+    # Resolve the configured city into a QWeather Location ID. Falls back to
+    # Shanghai when CITY is not set, so no extra configuration is required.
+    location_id, city_name = resolve_location(api_key)
+    print(f"Resolved city '{CITY}' -> {city_name} (Location ID: {location_id})")
+
+    forecast_data = get_weather_forecast(api_key, location_id)
+    generate_rss(forecast_data, city_name, location_id)
 
 if __name__ == "__main__":
     main()

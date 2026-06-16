@@ -115,9 +115,18 @@ https://raw.githubusercontent.com/liusonwood/rssqweather/main/weather.xml
 
 1. 打开您的 GitHub 仓库页面。
 2. 导航至 **Settings** > **Secrets and variables** > **Actions**。
-3. 点击 **New repository secret** 分别添加以下两个 Secret：
+3. 点击 **New repository secret** 分别添加以下 Secret：
    * **Name**: `QWEATHER_KEY` | **Value**: 您的 API Key
    * **Name**: `QWEATHER_HOST` | **Value**: 您的 API 主机地址 (e.g. `devapi.qweather.com`，**注意：不需要带协议头 `https://`**)
+   * **Name**: `CITY`（可选）| **Value**: 您要订阅的城市。支持以下任意形式：
+     * 城市名：`Tokyo`、`北京`、`New York`
+     * 和风天气 Location ID：`101020100`
+     * 行政区划代码 (Adcode)
+     * 经纬度坐标：`121.47,31.23`
+
+     > [!NOTE]
+     > 未设置时默认为 **上海（Shanghai）**，因此无需任何额外配置即可直接使用。
+
 4. 保存配置。
 
 ### 第三步：开启 Workflow 写入权限
@@ -147,6 +156,7 @@ pip install -r requirements.txt
 # 3. 设置本地环境变量
 export QWEATHER_KEY="你的和风天气API-Key"
 export QWEATHER_HOST="devapi.qweather.com" # 或您的专属 Host
+export CITY="Shanghai" # 可选；支持城市名 / Location ID / Adcode / 经纬度，默认上海
 
 # 4. 执行脚本
 python fetch_weather.py
