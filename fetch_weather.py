@@ -237,6 +237,18 @@ def generate_rss(daily_forecast, city_name, location_id=None):
     # Always update the href
     atom_link.set("href", atom_link_url)
 
+    # Sync channel metadata to the currently configured city so switching CITY
+    # updates the feed title/description even when the file already exists.
+    channel_title = channel.find("title")
+    if channel_title is None:
+        channel_title = ET.SubElement(channel, "title")
+    channel_title.text = f"{city_name} Weather Forecast"
+
+    channel_desc = channel.find("description")
+    if channel_desc is None:
+        channel_desc = ET.SubElement(channel, "description")
+    channel_desc.text = f"Daily weather forecast for {city_name} via QWeather."
+
     # Update Last Build Date
     last_build_date = channel.find("lastBuildDate")
     if last_build_date is None:
