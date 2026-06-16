@@ -30,6 +30,9 @@ jobs:
         env:
           QWEATHER_KEY: ${{ secrets.QWEATHER_KEY }}
           QWEATHER_HOST: ${{ secrets.QWEATHER_HOST }}
+          # Optional: city name (e.g. "Tokyo", "北京"), QWeather Location ID,
+          # Adcode, or "lon,lat" coordinates. Defaults to "Shanghai" when unset.
+          CITY: ${{ secrets.CITY }}
         run: |
           python fetch_weather.py
 

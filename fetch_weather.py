@@ -209,13 +209,13 @@ def generate_rss(daily_forecast, city_name, location_id=None):
             rss = ET.Element("rss", version="2.0")
             channel = ET.SubElement(rss, "channel")
             ET.SubElement(channel, "title").text = f"{city_name} Weather Forecast"
-            ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/rssQweather#{date_str}" # Update if needed
+            ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/rssqweather#{date_str}" # Update if needed
             ET.SubElement(channel, "description").text = f"Daily weather forecast for {city_name} via QWeather."
     else:
         rss = ET.Element("rss", version="2.0")
         channel = ET.SubElement(rss, "channel")
         ET.SubElement(channel, "title").text = f"{city_name} Weather Forecast"
-        ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/rssQweather#{date_str}" # Update if needed
+        ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/rssqweather#{date_str}" # Update if needed
         ET.SubElement(channel, "description").text = f"Daily weather forecast for {city_name} via QWeather."
 
     # Add atom:link (required for RSS validation)
@@ -270,7 +270,7 @@ def generate_rss(daily_forecast, city_name, location_id=None):
     # Create new item
     item = ET.Element("item")
     ET.SubElement(item, "title").text = title
-    ET.SubElement(item, "link").text = f"https://github.com/liusonwood/rssQweather#{date_str}"
+    ET.SubElement(item, "link").text = f"https://github.com/liusonwood/rssqweather#{date_str}"
     ET.SubElement(item, "description").text = description
     ET.SubElement(item, "guid", isPermaLink="false").text = guid_text
     ET.SubElement(item, "pubDate").text = rfc822_now()
