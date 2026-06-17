@@ -58,7 +58,7 @@ def _request_json(host, path, params, what):
     """
     url = f"https://{host}{path}"
     headers = {
-        "User-Agent": "WeatherRSSBot/1.0 (GitHub Actions)",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept-Encoding": "gzip"  # Explicitly request gzip as per docs
     }
     try:
