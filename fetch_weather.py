@@ -18,12 +18,10 @@ def rfc822_now():
     return format_datetime(datetime.datetime.now(datetime.timezone.utc))
 
 # Configuration
-# QWeather API Host for weather endpoints.
-# Users must provide their unique API Host from the QWeather Console.
+# QWeather API Host. Each developer account has a unique API Host (see
+# https://dev.qweather.com/en/docs/configuration/api-host/). It is shared by both
+# the weather endpoints and the GeoAPI (city lookup), so only one host is needed.
 API_HOST = os.environ.get("QWEATHER_HOST")
-# GeoAPI Host used to resolve the configured city into a Location ID.
-# The default works for most accounts; override only if QWeather provides a dedicated host.
-GEOAPI_HOST = os.environ.get("QWEATHER_GEOAPI_HOST") or "geoapi.qweather.com"
 # Which city to publish. Accepts a city name (e.g. "Shanghai", "北京"), a QWeather
 # Location ID (e.g. "101020100"), an Adcode, or "lon,lat" coordinates.
 # Defaults to Shanghai so the project keeps working without any extra configuration.
@@ -84,10 +82,17 @@ def resolve_location(api_key):
     Uses the QWeather GeoAPI City Lookup, which accepts a city name, Location ID,
     Adcode, or "lon,lat" coordinates. The first match is returned so the feed
     always points at exactly one city. Exits with a clear message if no match.
+
+    Note: GeoAPI shares the same API Host as the weather endpoints; the path is
+    prefixed with /geo (see https://dev.qweather.com/en/docs/api/geoapi/city-lookup/).
     """
+    if not API_HOST:
+        print("Error: QWEATHER_HOST environment variable not set.")
+        sys.exit(1)
+
     data = _request_json(
-        GEOAPI_HOST,
-        "/v2/city/lookup",
+        API_HOST,
+        "/geo/v2/city/lookup",
         {"location": CITY, "key": api_key, "lang": "en", "number": 1},
         "geo lookup",
     )
