@@ -4,6 +4,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![API Powered By](https://img.shields.io/badge/API-QWeather-orange.svg)](https://dev.qweather.com/)
+<a href="http://validator.w3.org/feed/check.cgi?url=https%3A//raw.githubusercontent.com/liusonwood/rssqweather/main/weather.xml"><img src="https://validator.w3.org/feed/images/valid-rss-rogers.png" alt="[Valid RSS]" title="Validate my RSS feed" /></a>
 
 基于 GitHub Actions 与和风天气（QWeather）API 实现的上海每日天气预报 RSS 订阅源生成器。每日自动运行、增量更新，为您提供最及时、详尽的天气数据。
 
