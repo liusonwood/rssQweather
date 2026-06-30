@@ -118,7 +118,57 @@ def get_weather_forecast(api_key, location_id):
     )
     return data["daily"]
 
-def generate_rss(daily_forecast, city_name, location_id=None):
+def select_forecast_day(daily_forecast, date_param=None):
+    """Selects the forecast day from the daily_forecast list based on date_param.
+
+    date_param can be:
+    - None (defaults to the second day, index 1)
+    - "today" or "0" -> index 0
+    - "tomorrow" or "1" -> index 1
+    - "2" -> index 2
+    - a date string like "2026-07-01"
+
+    Returns the selected forecast dict. Exits with error if not found.
+    """
+    if not daily_forecast:
+        print("Error: No forecast data available.")
+        sys.exit(1)
+
+    if date_param is None:
+        # Default to the second day ("第二天", index 1)
+        if len(daily_forecast) < 2:
+            print("Error: Insufficient forecast data (at least 2 days needed for tomorrow default).")
+            sys.exit(1)
+        return daily_forecast[1]
+
+    date_param_str = str(date_param).strip().lower()
+
+    # If it's numeric/relative
+    if date_param_str in ("today", "0"):
+        return daily_forecast[0]
+    elif date_param_str in ("tomorrow", "1"):
+        if len(daily_forecast) < 2:
+            print("Error: Tomorrow's forecast is not available.")
+            sys.exit(1)
+        return daily_forecast[1]
+    elif date_param_str == "2":
+        if len(daily_forecast) < 3:
+            print("Error: Day after tomorrow's forecast is not available.")
+            sys.exit(1)
+        return daily_forecast[2]
+
+    # Check if it's a date string in YYYY-MM-DD
+    for day in daily_forecast:
+        if day.get("fxDate") == date_param_str:
+            return day
+
+    # Try matching date string if the user entered something like 2026-06-30
+    print(f"Error: Could not find forecast for date or index '{date_param}'.")
+    available_dates = [day.get("fxDate") for day in daily_forecast if day.get("fxDate")]
+    print(f"Available forecast dates: {', '.join(available_dates)}")
+    sys.exit(1)
+
+def generate_rss(daily_forecast, city_name, location_id=None, date_param=None):
     """Generates an RSS 2.0 XML file from the forecast data, appending new data."""
 
     # Prefer the readable city name; if it cannot be slugified to ASCII (rare for
@@ -129,13 +179,8 @@ def generate_rss(daily_forecast, city_name, location_id=None):
     # Register Atom namespace
     ET.register_namespace('atom', "http://www.w3.org/2005/Atom")
 
-    # We want tomorrow's weather. 
-    # daily_forecast[0] is today, daily_forecast[1] is tomorrow.
-    if len(daily_forecast) < 2:
-        print("Error: Insufficient forecast data received.")
-        sys.exit(1)
-        
-    tomorrow = daily_forecast[1]
+    # Select the target day's forecast based on date_param (defaults to tomorrow)
+    tomorrow = select_forecast_day(daily_forecast, date_param)
     
     # Parse data
     date_str = tomorrow.get("fxDate", "N/A")
@@ -314,6 +359,14 @@ def generate_rss(daily_forecast, city_name, location_id=None):
     print(f"Successfully generated {RSS_FILENAME} for {city_name}.")
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Fetch QWeather forecast and generate RSS feed.")
+    parser.add_argument(
+        "-d", "--date",
+        help="The forecast date to write (e.g., '2026-07-01', 'today', 'tomorrow', '0', '1', '2'). Defaults to tomorrow ('1')."
+    )
+    args = parser.parse_args()
+
     api_key = os.environ.get("QWEATHER_KEY")
     if not api_key:
         print("Error: QWEATHER_KEY environment variable not set.")
@@ -325,7 +378,11 @@ def main():
     print(f"Resolved city '{CITY}' -> {city_name} (Location ID: {location_id})")
 
     forecast_data = get_weather_forecast(api_key, location_id)
-    generate_rss(forecast_data, city_name, location_id)
+
+    # Use command-line argument if provided, otherwise check environment variable
+    date_param = args.date or os.environ.get("FORECAST_DATE")
+
+    generate_rss(forecast_data, city_name, location_id, date_param)
 
 if __name__ == "__main__":
     main()
