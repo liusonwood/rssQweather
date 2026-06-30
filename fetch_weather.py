@@ -93,7 +93,7 @@ def resolve_location(api_key):
     data = _request_json(
         API_HOST,
         "/geo/v2/city/lookup",
-        {"location": CITY, "key": api_key, "lang": "en", "number": 1},
+        {"location": CITY, "key": api_key, "lang": "zh", "number": 1},
         "geo lookup",
     )
     locations = data.get("location") or []
@@ -113,7 +113,7 @@ def get_weather_forecast(api_key, location_id):
     data = _request_json(
         API_HOST,
         "/v7/weather/3d",
-        {"location": location_id, "key": api_key, "lang": "en"},
+        {"location": location_id, "key": api_key, "lang": "zh"},
         "weather",
     )
     return data["daily"]
@@ -226,24 +226,24 @@ def generate_rss(daily_forecast, city_name, location_id=None, date_param=None):
     
     # Format Description
     description = (
-        f"<strong>Condition (Day):</strong> {text_day} (Icon: {icon_day})<br/>"
-        f"<strong>Condition (Night):</strong> {text_night} (Icon: {icon_night})<br/>"
-        f"<strong>Temperature:</strong> {temp_min}°C to {temp_max}°C<br/>"
-        f"<strong>Precipitation:</strong> {precip} mm<br/>"
-        f"<strong>Cloud Cover:</strong> {cloud}%<br/>"
+        f"<strong>白天天气：</strong>{text_day}（图标：{icon_day}）<br/>"
+        f"<strong>夜间天气：</strong>{text_night}（图标：{icon_night}）<br/>"
+        f"<strong>温度：</strong>{temp_min}°C 至 {temp_max}°C<br/>"
+        f"<strong>降水量：</strong>{precip} mm<br/>"
+        f"<strong>云量：</strong>{cloud}%<br/>"
         
         f"<br/>"
         
-        f"<strong>Wind (Day):</strong> {wind_dir_day} ({wind_360_day}°), Scale {wind_scale_day}, Speed {wind_speed_day} km/h<br/>"
-        f"<strong>Wind (Night):</strong> {wind_dir_night} ({wind_360_night}°), Scale {wind_scale_night}, Speed {wind_speed_night} km/h<br/>"
+        f"<strong>白天风力：</strong>{wind_dir_day}（{wind_360_day}°），{wind_scale_day}级，风速 {wind_speed_day} km/h<br/>"
+        f"<strong>夜间风力：</strong>{wind_dir_night}（{wind_360_night}°），{wind_scale_night}级，风速 {wind_speed_night} km/h<br/>"
         
         f"<br/>"
         
-        f"<strong>Humidity:</strong> {humidity}%<br/>"
-        f"<strong>Visibility:</strong> {vis} km<br/>"
-        f"<strong>Sun:</strong> Rise {sunrise}, Set {sunset}<br/>"
-        f"<strong>Moon:</strong> Rise {moonrise}, Set {moonset} (Phase: {moon_phase},{moon_phase_icon})<br/>"
-        f"<strong>UV Index:</strong> {uv_index}"
+        f"<strong>湿度：</strong>{humidity}%<br/>"
+        f"<strong>能见度：</strong>{vis} km<br/>"
+        f"<strong>日出/日落：</strong>{sunrise} / {sunset}<br/>"
+        f"<strong>月出/月落：</strong>{moonrise} / {moonset}（月相：{moon_phase}，{moon_phase_icon}）<br/>"
+        f"<strong>紫外线指数：</strong>{uv_index}"
     )
 
     # Load existing RSS or create new
@@ -258,15 +258,15 @@ def generate_rss(daily_forecast, city_name, location_id=None, date_param=None):
             print("Warning: Corrupt or invalid RSS file. Creating new.")
             rss = ET.Element("rss", version="2.0")
             channel = ET.SubElement(rss, "channel")
-            ET.SubElement(channel, "title").text = f"{city_name} Weather Forecast"
+            ET.SubElement(channel, "title").text = f"{city_name} 天气预报"
             ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/rssqweather#{date_str}" # Update if needed
-            ET.SubElement(channel, "description").text = f"Daily weather forecast for {city_name} via QWeather."
+            ET.SubElement(channel, "description").text = f"{city_name} 每日天气预报，数据来源：QWeather。"
     else:
         rss = ET.Element("rss", version="2.0")
         channel = ET.SubElement(rss, "channel")
-        ET.SubElement(channel, "title").text = f"{city_name} Weather Forecast"
+        ET.SubElement(channel, "title").text = f"{city_name} 天气预报"
         ET.SubElement(channel, "link").text = f"https://github.com/liusonwood/rssqweather#{date_str}" # Update if needed
-        ET.SubElement(channel, "description").text = f"Daily weather forecast for {city_name} via QWeather."
+        ET.SubElement(channel, "description").text = f"{city_name} 每日天气预报，数据来源：QWeather。"
 
     # Add atom:link (required for RSS validation)
     atom_ns = "http://www.w3.org/2005/Atom"
@@ -292,12 +292,12 @@ def generate_rss(daily_forecast, city_name, location_id=None, date_param=None):
     channel_title = channel.find("title")
     if channel_title is None:
         channel_title = ET.SubElement(channel, "title")
-    channel_title.text = f"{city_name} Weather Forecast"
+    channel_title.text = f"{city_name} 天气预报"
 
     channel_desc = channel.find("description")
     if channel_desc is None:
         channel_desc = ET.SubElement(channel, "description")
-    channel_desc.text = f"Daily weather forecast for {city_name} via QWeather."
+    channel_desc.text = f"{city_name} 每日天气预报，数据来源：QWeather。"
 
     # Update Last Build Date
     last_build_date = channel.find("lastBuildDate")
@@ -356,7 +356,7 @@ def generate_rss(daily_forecast, city_name, location_id=None, date_param=None):
     with open(RSS_FILENAME, "w", encoding="utf-8") as f:
         f.write(xml_str)
         
-    print(f"Successfully generated {RSS_FILENAME} for {city_name}.")
+    print(f"成功生成 {RSS_FILENAME}，城市：{city_name}。")
 
 def main():
     import argparse
